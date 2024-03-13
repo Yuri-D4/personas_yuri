@@ -1,0 +1,17 @@
+{
+    "name": "vendor/barcode",
+    "description": "creacion del codigo de barras",
+    "autoload": {
+        "psr-4": {
+            "Vendor\\Barcode\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yurica Ducuara"
+        }
+    ],
+    "require": {
+        "picqer/php-barcode-generator": "^2.4"
+    }
+}
