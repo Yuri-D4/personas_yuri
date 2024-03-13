@@ -13,14 +13,20 @@ $asigna = $usua->fetchAll(PDO::FETCH_ASSOC);
 
 if (isset($_POST["registro"]) && ($_POST["registro"] == "formu")) {
     $ced = $_POST['ced'];
-    $codigo_barras = uniqid() . rand(1000, 9999);
-    $generator = new BarcodeGeneratorPNG();
-    $codigo_barras_imagenes = $generator->getBarcode($codigo_barras, $generator::TYPE_CODE_128);
+    $nombre = $_POST['nombre'];
+    $email = isset($_POST['email']) ? $_POST['email'] : null; // Validación para asegurarse de que $email no sea nulo
+    if ($email !== null) {
+        $codigo_barras = uniqid() . rand(1000, 9999);
+        $generator = new BarcodeGeneratorPNG();
+        $codigo_barras_imagenes = $generator->getBarcode($codigo_barras, $generator::TYPE_CODE_128);
 
-    file_put_contents(_DIR_ . '/imagenes/' . $codigo_barras . '.png', $codigo_barras_imagenes);
+        file_put_contents(__DIR__ . '/imagenes/' . $codigo_barras . '.png', $codigo_barras_imagenes);
 
-    $Insertsql = $conectar->prepare("INSERT INTO persona (nombre, ced, codigo_barras) VALUES (?, ?, ?)");
-    $Insertsql->execute([$ced, $codigo_barras]);
+        $Insertsql = $conectar->prepare("INSERT INTO persona (nombre, ced, codigo_barras, email) VALUES (?, ?, ?, ?)");
+        $Insertsql->execute([$nombre, $ced, $codigo_barras, $email]);
+    } else {
+        echo "Error: El campo de correo electrónico no puede estar vacío.";
+    }
 }
 ?>
 
@@ -64,6 +70,10 @@ if (isset($_POST["registro"]) && ($_POST["registro"] == "formu")) {
                 <div class="form-group">
                     <label for="ced">Cedula</label>
                     <input type="text" class="form-control" id="ced" name="ced" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" required>
                 </div>
                 <input type="submit" class="btn btn-success" value="Registrar">
                 <input type="hidden" name="registro" value="formu">
